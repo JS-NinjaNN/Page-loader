@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-// import pageLoader from '../src/index.js';
+import pageLoader from '../src/index.js';
 
 const program = new Command();
 
@@ -12,7 +12,7 @@ program
   .argument('<url>')
   .action(() => {
     const option = program.opts();
-    // const diff = genDiff(filepath1, filepath2, option.format);
+    const filepath = pageLoader(url, option.output);
     console.log(option);
   });
 program.parse();

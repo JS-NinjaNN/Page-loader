@@ -1,5 +1,5 @@
 {
-   "name": "backend-project-4",
+   "name": "@hexlet/code",
    "version": "1.0.0",
    "description": "Page-loader",
    "type": "module",
@@ -22,6 +22,8 @@
       "eslint": "^8.39.0",
       "eslint-config-airbnb-base": "^15.0.0",
       "eslint-plugin-import": "^2.27.5",
+      "eslint-plugin-jest": "^27.2.1",
+      "jest": "^29.5.0",
       "nock": "^13.3.0"
    },
    "dependencies": {
