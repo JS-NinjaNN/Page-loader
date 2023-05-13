@@ -15,98 +15,70 @@ const getFixturePath = (...restOfPath) => path.join(__dirname, '..', '__fixtures
 describe('test pageLoader', () => {
   const address = 'http://localhost/test';
   const testFilesDir = 'test-page_files';
-  const htmlFileName = 'test_page.html';
-  const fileName1 = 'nodejs.png';
-  const fileName1Loaded = 'localhost-test-page-files-nodejs-png.png';
-  let loadedPage;
-  let loadedCoursesPage;
-  let fileData1;
+  const mainHtmlFileName = 'test_page.html';
+  const imageFileName = 'nodejs.png';
+  const loadedImageFileName = 'localhost-test-page-files-nodejs-png.png';
   const cssFileName = 'application.css';
-  const cssFileLoaded = 'localhost-assets-application-css.css';
-  let cssFileReaded;
+  const loadedCssFileName = 'localhost-assets-application-css.css';
   const jsFileName = 'runtime.js';
-  const jsFileLoaded = 'localhost-test-page-files-runtime-js.js';
-  let jsFileReaded;
+  const loadedJsFileName = 'localhost-test-page-files-runtime-js.js';
   const coursesFileName = 'courses.html';
-  const coursesFileLoaded = 'localhost-courses.html';
-  let coursesFileReaded;
-  let page;
+  const loadedCoursesFileName = 'localhost-courses.html';
 
-  beforeAll(() => {
-    loadedPage = `<!DOCTYPE html><html lang="ru"><head>
-    <meta charset="utf-8">
-    <title>Курсы по программированию Хекслет</title>
-    <link rel="stylesheet" media="all" href="https://cdn2.hexlet.io/assets/menu.css">
-    <link rel="stylesheet" media="all" href="localhost-test_files/localhost-assets-application-css.css">
-    <link href="localhost-test_files/localhost-courses.html" rel="canonical">
-  </head>
-  <body>
-    <img src="localhost-test_files/localhost-test-page-files-nodejs-png.png" alt="Иконка профессии Node.js-программист">
-    <h3>
-      <a href="/professions/nodejs">Node.js-программист</a>
-    </h3>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script src="localhost-test_files/localhost-test-page-files-runtime-js.js"></script>
-  
-</body></html>`;
-
-    loadedCoursesPage = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Courses</title>
-</head>
-<body>
-  <h1>Courses:</h1>
-  <p>Course 1</p>
-  <p>Course 2</p>
-</body>
-</html>`;
-
-    page = fs.readFileSync(getFixturePath(htmlFileName));
-    fileData1 = fs.readFileSync(getFixturePath(testFilesDir, fileName1));
-    cssFileReaded = fs.readFileSync(getFixturePath(testFilesDir, cssFileName)).toString();
-    jsFileReaded = fs.readFileSync(getFixturePath(testFilesDir, jsFileName)).toString();
-    coursesFileReaded = fs.readFileSync(getFixturePath(testFilesDir, coursesFileName));
-  });
+  const loadedPageContent = fs.readFileSync(getFixturePath('loaded_page.html')).toString();
+  const loadedCoursesPageContent = fs.readFileSync(getFixturePath('loaded_courses_page.html')).toString();
+  const imageData = fs.readFileSync(getFixturePath(testFilesDir, imageFileName));
+  const cssFileContent = fs.readFileSync(getFixturePath(testFilesDir, cssFileName)).toString();
+  const jsFileContent = fs.readFileSync(getFixturePath(testFilesDir, jsFileName)).toString();
+  const coursesFileContent = fs.readFileSync(getFixturePath(testFilesDir, coursesFileName));
+  const mainHtmlPageContent = fs.readFileSync(getFixturePath(mainHtmlFileName));
 
   beforeEach(() => {
     nock('http://localhost')
       .get('/test')
-      .reply(200, page)
-      .get(`/${testFilesDir}/${fileName1}`)
-      .reply(200, fileData1)
+      .reply(200, mainHtmlPageContent)
+      .get(`/${testFilesDir}/${imageFileName}`)
+      .reply(200, imageData)
       .get('/assets/application.css')
-      .reply(200, cssFileReaded)
+      .reply(200, cssFileContent)
       .get('/test-page_files/runtime.js')
-      .reply(200, jsFileReaded)
+      .reply(200, jsFileContent)
       .get('/courses')
-      .reply(200, coursesFileReaded);
+      .reply(200, coursesFileContent);
   });
 
   afterAll(() => {
-    fsp.rm(getFixturePath(getDirName(address)), { recursive: true });
+    fsp.rm(getFixturePath('localhost'), { recursive: true });
   });
 
   it('test page-loader', async () => {
     await pageLoader(address, getFixturePath());
 
     const dataPage = await fsp.readFile(getFixturePath(getDirName(address), `${getFileName(address)}.html`), 'utf8');
-    expect(dataPage).toBe(loadedPage);
+    expect(dataPage).toBe(loadedPageContent);
 
     const file1 = await fsp
-      .readFile(getFixturePath(getDirName(address), 'localhost-test_files', fileName1Loaded));
+      .readFile(getFixturePath(getDirName(address), 'localhost-test_files', loadedImageFileName));
     expect(file1).toBeDefined();
 
     const file2 = await fsp
-      .readFile(getFixturePath(getDirName(address), 'localhost-test_files', cssFileLoaded), 'utf8');
-    expect(file2).toBe(cssFileReaded);
+      .readFile(getFixturePath(getDirName(address), 'localhost-test_files', loadedCssFileName), 'utf8');
+    expect(file2).toBe(cssFileContent);
 
-    const file3 = await fsp.readFile(getFixturePath(getDirName(address), 'localhost-test_files', jsFileLoaded), 'utf8');
-    expect(file3).toBe(jsFileReaded);
+    const file3 = await fsp.readFile(getFixturePath(getDirName(address), 'localhost-test_files', loadedJsFileName), 'utf8');
+    expect(file3).toBe(jsFileContent);
 
     const file4 = await fsp
-      .readFile(getFixturePath(getDirName(address), 'localhost-test_files', coursesFileLoaded), 'utf8');
-    expect(file4).toBe(loadedCoursesPage);
+      .readFile(getFixturePath(getDirName(address), 'localhost-test_files', loadedCoursesFileName), 'utf8');
+    expect(file4).toBe(loadedCoursesPageContent);
+
+    await fsp.rm(getFixturePath('localhost'), { recursive: true });
+  });
+
+  it('test page-loader errors', async () => {
+    await expect(pageLoader('http://localhost/wrong_page', getFixturePath())).rejects.toHaveProperty('statusCode', 404);
+    await expect(pageLoader('wrong_address', getFixturePath())).rejects.toThrow('Incorrect address (must be as \'http://example.com\')');
+    await expect(pageLoader(address, getFixturePath())).rejects.toHaveProperty('code', 'EEXIST');
+    await expect(pageLoader(address, getFixturePath('wrong_directory_name'))).rejects.toHaveProperty('code', 'ENOENT');
   });
 });
