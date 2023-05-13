@@ -8,11 +8,9 @@ program
   .name('page-loader')
   .version('1.0.0')
   .description('Page loader utility')
-  .option('-o, --output [path]', 'output dir', '/home/user/current-dir')
-  .argument('<url>')
-  .action(() => {
-    const option = program.opts();
-    const filepath = pageLoader(url, option.output);
-    console.log(option);
+  .option('-o, --output [path]', 'output dir (default: "/home/user/current-dir")')
+  .argument('<address>')
+  .action((address) => {
+    pageLoader(address, program.opts().output);
   });
 program.parse();
