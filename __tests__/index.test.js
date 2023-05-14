@@ -19,11 +19,11 @@ describe('test pageLoader', () => {
   const loadedTestFilesDir = 'localhost-test_files';
   const mainHtmlFileName = 'test_page.html';
   const imageFileName = 'nodejs.png';
-  const loadedImageFileName = 'localhost-test-page-files-nodejs-png.png';
+  const loadedImageFileName = 'localhost-test-page-files-nodejs.png';
   const cssFileName = 'application.css';
-  const loadedCssFileName = 'localhost-assets-application-css.css';
+  const loadedCssFileName = 'localhost-assets-application.css';
   const jsFileName = 'runtime.js';
-  const loadedJsFileName = 'localhost-test-page-files-runtime-js.js';
+  const loadedJsFileName = 'localhost-test-page-files-runtime.js';
   const coursesFileName = 'courses.html';
   const loadedCoursesFileName = 'localhost-courses.html';
 
