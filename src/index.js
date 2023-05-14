@@ -3,7 +3,6 @@ import path from 'path';
 import axios from 'axios';
 import debug from 'debug';
 import getFileName from './utils/getFileName.js';
-import getDirName from './utils/getDirName.js';
 import setLocalLinks from './utils/setLocalLinks.js';
 import loadAssets from './utils/loadAssets.js';
 
@@ -14,8 +13,6 @@ const loaderDebug = debug('page-loader:loader');
 
 const pageLoader = (address, outputPath = process.cwd(), task = null) => {
   let mainFileName;
-  let dirName;
-  let rootDirPath;
   let mainFilePath;
   let assetsDirName;
   let assetsDirPath;
@@ -23,18 +20,15 @@ const pageLoader = (address, outputPath = process.cwd(), task = null) => {
   return Promise.resolve()
     .then(() => {
       mainFileName = getFileName(address);
-      dirName = getDirName(address);
-      rootDirPath = `${outputPath}${path.sep}${dirName}`;
-      mainFilePath = path.resolve(rootDirPath, `${mainFileName}.html`);
+      mainFilePath = path.resolve(outputPath, `${mainFileName}.html`);
       assetsDirName = `${mainFileName}_files`;
-      assetsDirPath = path.resolve(outputPath, dirName, assetsDirName);
+      assetsDirPath = path.resolve(outputPath, assetsDirName);
 
-      return fsp.mkdir(rootDirPath);
+      return axios.get(address);
     })
-    .then(() => axios.get(address))
     .then(({ data }) => {
       loaderDebug(`address: '${address}'`);
-      loaderDebug(`output path: '${rootDirPath}'`);
+      loaderDebug(`output path: '${outputPath}'`);
       httpDebug('Page have been loaded.');
       const page = setLocalLinks(data, assetsDirName, address);
       loaderDebug('Links have been replaced by local');
