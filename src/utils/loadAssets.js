@@ -28,7 +28,7 @@ const getLinks = (html, hostname) => {
   }, []);
 };
 
-const assetsLoader = (html, hostname, task) => {
+const loadAssets = (html, hostname, task) => {
   const links = getLinks(html, hostname);
   const promises = links.map((link) => {
     if (task) {
@@ -50,4 +50,4 @@ const assetsLoader = (html, hostname, task) => {
     }));
 };
 
-export default assetsLoader;
+export default loadAssets;
