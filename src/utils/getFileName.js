@@ -14,7 +14,7 @@ const getFileName = (address) => {
     const url = new URL(removeExtension(address));
     return `${url.hostname}${url.pathname || ''}`.replace(/[^0-9a-z]/gi, '-');
   } catch (e) {
-    throw new Error('Incorrect address (must be as \'http://example.com\')');
+    throw new Error(`Incorrect address ${address} (must be as 'http://example.com')`);
   }
 };
 

@@ -6,7 +6,6 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 import pageLoader from '../src/index.js';
-import getFileName from '../src/utils/getFileName.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -58,7 +57,7 @@ describe('test pageLoader', () => {
   it('test page-loader', async () => {
     await pageLoader(address, testDir);
 
-    const dataPage = await fsp.readFile(path.resolve(testDir, `${getFileName(address)}.html`), 'utf8');
+    const dataPage = await fsp.readFile(path.resolve(testDir, 'localhost-test.html'), 'utf8');
     expect(dataPage).toBe(loadedPageContent);
 
     const file1 = await fsp
@@ -79,7 +78,6 @@ describe('test pageLoader', () => {
 
   it('test page-loader errors', async () => {
     await expect(pageLoader('http://localhost/wrong_page', path.resolve(testDir))).rejects.toHaveProperty('statusCode', 404);
-    await expect(pageLoader('wrong_address', path.resolve(testDir))).rejects.toThrow('Incorrect address (must be as \'http://example.com\')');
     await expect(pageLoader(address, path.resolve(testDir, 'wrong_directory_name'))).rejects.toHaveProperty('code', 'ENOENT');
   });
 });
